@@ -1,0 +1,68 @@
+# azure-pipelines.yml
+trigger:
+- main   # Trigger on main branch commits from GitHub
+
+# Use your self-hosted pool (agent you installed locally)
+pool:
+  name: 'Default'   # Replace with your self-hosted pool name
+
+stages:
+# --------------------------
+# 1. Development Testing
+# --------------------------
+- stage: Dev_Test
+  displayName: "Development Testing"
+  jobs:
+  - job: DevTests
+    displayName: "Run Unit Tests"
+    steps:
+    - checkout: self
+      clean: true
+
+    - script: |
+        echo "Running Development Unit Tests..."
+        # Example test command (replace with your own)
+        dotnet test --configuration Debug
+      displayName: "Run Unit Tests"
+
+# --------------------------
+# 2. Quality Testing
+# --------------------------
+- stage: QA_Test
+  displayName: "Quality Assurance Testing"
+  dependsOn: Dev_Test
+  condition: succeeded()   # Run only if Dev_Test succeeds
+  jobs:
+  - job: QATests
+    displayName: "Run QA Tests"
+    steps:
+    - checkout: self
+
+    - script: |
+        echo "Running QA / Integration Tests..."
+        # Replace with your QA testing tools/commands
+        npm install
+        npm test
+      displayName: "Run QA Tests"
+
+# --------------------------
+# 3. Production Deployment
+# --------------------------
+- stage: Production
+  displayName: "Deploy to Production"
+  dependsOn: QA_Test
+  condition: succeeded()   # Only deploy if QA passes
+  jobs:
+  - deployment: DeployJob
+    displayName: "Deploy to Production"
+    environment: "Production"
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+
+          - script: |
+              echo "Deploying application to Production..."
+              # Add deployment commands here (e.g., copy files, run scripts, kubectl, etc.)
+            displayName: "Deployment Step"
