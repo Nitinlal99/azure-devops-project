@@ -25,14 +25,7 @@ stages:
       inputs:
        containerRegistry: 'nitinlal99-docker-hub'
        repository: 'nitinlal99/setting-currency-exchange-devops'
-              command: 'buildandpush'
+              command: 'buildAndpush'
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         tags: |
           '$(tag)'
-- task: Docker@2
-  inputs:
-    containerRegistry: 'nitinlal99-docker-hub'
-    repository: 'nitinlal99/setting-currency-exchange-devops'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
-    tags: '$(tag)'
