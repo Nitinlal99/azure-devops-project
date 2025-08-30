@@ -18,14 +18,14 @@ stages:
   - job: Build
     displayName: Build
     pool:
-       name: 'Default'
+      name: 'Default'
     steps:
     - task: Docker@2
-      displayName: Build an image
+      displayName: Build and Push Docker image
       inputs:
-       containerRegistry: 'nitinlal99-docker-hub'
-       repository: 'nitinlal99/setting-currency-exchange-devops'
-              command: 'buildAndpush'
+        containerRegistry: 'nitinlal99-docker-hub'
+        repository: 'nitinlal99/setting-currency-exchange-devops'
+        command: 'buildAndPush'
         dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         tags: |
-          '$(tag)'
+          $(tag)
